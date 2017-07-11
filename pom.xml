@@ -76,7 +76,8 @@
 					<!-- disable webpage processing -->
 					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
 					<!-- matches distribution management repository url above -->
-					<branch>refs/heads/${project.name}</branch>
+					<branch>refs/heads/master</branch>
+					<merge>true</merge>
 					<!-- remote branch name -->
 					<includes>
 						<include>**/*</include>
