@@ -273,12 +273,14 @@ public class ExcelUtils {
     		IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, clazz, isWriteHeader, sheetName, isXSSF).write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, Class<?> clazz, boolean isWriteHeader, IExcelSink excelSink)
             throws Exception {
 
         exportExcelNoModuleHandler(data, clazz, isWriteHeader, null, true).write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     private Workbook exportExcelNoModuleHandler(List<?> data, Class<?> clazz, boolean isWriteHeader, String sheetName,
@@ -331,18 +333,21 @@ public class ExcelUtils {
     public void exportObjects2Excel(List<?> data, List<String> header, String sheetName, boolean isXSSF, IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, header, sheetName, isXSSF).write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, List<String> header, IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, header, null, true)
                 .write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, null, null, true)
                 .write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     private Workbook exportExcelNoModuleHandler(List<?> data, List<String> header, String sheetName, boolean isXSSF)
