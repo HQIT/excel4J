@@ -1,5 +1,22 @@
 package com.github;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.github.data.Position;
 import com.github.handler.ExcelHeader;
 import com.github.handler.ExcelTemplate;
@@ -8,23 +25,6 @@ import com.github.source.IExcelSource;
 import com.github.utils.Utils;
 
 import moudles.Student1;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.FileOutputStream;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ExcelUtils {
 
@@ -467,14 +467,15 @@ public class ExcelUtils {
     /*      *) os               =>      导出文件流                                     */
     public void exportObjects2Excel(List<?> data, Class<?> clazz, boolean isWriteHeader, String[] sheetNames, boolean isXSSF,
     		IExcelSink excelSink) throws Exception {
-
         exportExcelNoModuleHandler(data,clazz, isWriteHeader, sheetNames, isXSSF).write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, Class<?> clazz, boolean isWriteHeader, IExcelSink excelSink)
             throws Exception {
 
         exportExcelNoModuleHandler(data, clazz, isWriteHeader, null, true).write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     private Workbook exportExcelNoModuleHandler(List<?> data,Class<?> clazz, boolean isWriteHeader, String[] sheetNames,
@@ -537,20 +538,22 @@ public class ExcelUtils {
     /*      *) os               =>      导出文件流                                                                */
 
     public void exportObjects2Excel(List<?> data, List<?> header, String[] sheetNames, boolean isXSSF, IExcelSink excelSink) throws Exception {
-
         exportExcelNoModuleHandler(data, header, sheetNames, isXSSF).write(excelSink.getSink());
+		excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, List<?> header, IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, header,null, true)
                 .write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     public void exportObjects2Excel(List<?> data, IExcelSink excelSink) throws Exception {
 
         exportExcelNoModuleHandler(data, null,null, true)
                 .write(excelSink.getSink());
+        excelSink.onCompleted().close();
     }
 
     private Workbook exportExcelNoModuleHandler(List<?> data, List<?> header, String[] sheetNames, boolean isXSSF)

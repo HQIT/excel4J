@@ -438,6 +438,7 @@ public class ExcelTemplate {
     public void write(IExcelSink excelSink) {
         try {
             this.workbook.write(excelSink.getSink());
+            excelSink.onCompleted();
         } catch (IOException e) {
             e.printStackTrace();
             excelSink.close();
