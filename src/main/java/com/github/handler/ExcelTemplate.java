@@ -1,18 +1,15 @@
 package com.github.handler;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.github.data.Position;
 import com.github.sink.IExcelSink;
 import com.github.source.IExcelSource;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -234,20 +231,7 @@ public class ExcelTemplate {
     public Sheet getSheet(){
     	return this.sheet;
     }
-    
-    /*
-    public static void setRegionStyle(XSSFSheet sheet, Region region, XSSFCellStyle cs) {
-    	  for (int i = region.getRowFrom(); i <= region.getRowTo(); i++) {
-    	   HSSFRow row = HSSFCellUtil.getRow(i, sheet);
-    	   for (int j = region.getColumnFrom(); j <= region.getColumnTo(); j++) {
-    	    HSSFCell cell = HSSFCellUtil.getCell(row, (short) j);
-    	    cell.setCellStyle(cs);
-    	   }
-    	  }
-    	 }
-    
-    */
-    
+ 
     public Map<String, Cell> getExtendData(Map<String, String> data){
     	Map<String, Cell> results = new HashMap<>();
     	if (data == null)
@@ -264,10 +248,25 @@ public class ExcelTemplate {
                 }
             }
         }
-        
         return results;
     }
 
+    public String[] getExtendDataArray(){
+    	String[] results = new String[2];
+    	int i = 0;
+        for (Row row : this.sheet) {
+            for (Cell c : row) {
+                if (c.getCellType() != Cell.CELL_TYPE_STRING)
+                    continue;
+                String str = c.getStringCellValue().trim();
+                if (str.startsWith("#")) {
+                	results[i] = str.substring(1);
+                }
+                i++;
+            }
+        }
+        return results;
+    }
     
     public String[] getExtendDataList(Map<String, String> extendMap){
 	    String[] datalist  = new String[extendMap.size()];
