@@ -2,6 +2,7 @@ package com.github.handler;
 
 import org.apache.poi.ss.usermodel.*;
 
+import com.github.data.Position;
 import com.github.sink.IExcelSink;
 import com.github.source.IExcelSource;
 
@@ -30,6 +31,7 @@ public class ExcelTemplate {
      * 当前表编号
      */
     private int sheetIndex;
+    
     /**
      * 当前行
      */
@@ -105,12 +107,14 @@ public class ExcelTemplate {
         }
         return template;
     }
-
+    
+    
     /***********************************初始化模板开始***********************************/
 
     private ExcelTemplate loadTemplate(IExcelSource excelSource) throws Exception {
         this.workbook = excelSource.getWorkBook();
         this.sheet = this.workbook.getSheetAt(this.sheetIndex);
+       // workbook.setSheetName(sheetIndex, sheetName);
         initModuleConfig();
         this.currentRowIndex = this.initRowIndex;
         this.currentColumnIndex = this.initColumnIndex;
@@ -181,6 +185,7 @@ public class ExcelTemplate {
 
     /*************************************数据填充开始***********************************/
 
+    
     /**
      * 根据map替换相应的常量，通过Map中的值来替换#开头的值
      *
@@ -202,7 +207,107 @@ public class ExcelTemplate {
             }
         }
     }
+    
+    public CellStyle getDefaultStyle(){
+    	return defaultStyle;
+    }
+    public CellStyle getDoubleLineStyle(){
+    	return doubleLineStyle;
+    }
+    public CellStyle getSingleLineStyle(){
+    	return singleLineStyle;
+    }
+    
+    public CellStyle getCellStyle( String styleKey) {
+    	CellStyle cellstyle = null;
+    	if (null != styleKey && null != this.classifyStyle.get(styleKey)) {
+    		cellstyle = this.classifyStyle.get(styleKey);
+        }
+    	else
+    		cellstyle = this.defaultStyle;
+        return cellstyle;
+    }
+    
+    public Sheet getSheet(){
+    	return this.sheet;
+    }
+ 
+    public Map<String, Cell> getExtendData(Map<String, String> data){
+    	Map<String, Cell> results = new HashMap<>();
+    	if (data == null)
+            return null;
+        for (Row row : this.sheet) {
+            for (Cell c : row) {
+                if (c.getCellType() != Cell.CELL_TYPE_STRING)
+                    continue;
+                String str = c.getStringCellValue().trim();
+                if (str.startsWith("#")) {
+                    if (data.containsKey(str.substring(1))) {
+                    	results.put(str.substring(1), c);
+                    }
+                }
+            }
+        }
+        return results;
+    }
 
+    public String[] getExtendDataArray(){
+    	String[] results = new String[2];
+    	int i = 0;
+        for (Row row : this.sheet) {
+            for (Cell c : row) {
+                if (c.getCellType() != Cell.CELL_TYPE_STRING)
+                    continue;
+                String str = c.getStringCellValue().trim();
+                if (str.startsWith("#")) {
+                	results[i] = str.substring(1);
+                }
+                i++;
+            }
+        }
+        return results;
+    }
+    
+    public String[] getExtendDataList(Map<String, String> extendMap){
+	    String[] datalist  = new String[extendMap.size()];
+    	String[] keySet = new String[extendMap.keySet().size()];
+    	extendMap.keySet().toArray(keySet); 
+    	for (int c = 0; c < extendMap.keySet().size(); c++) 
+    	{
+    		datalist[c] = extendMap.get(keySet[c]);
+    	}
+		return datalist;
+    }
+    
+    public Cell[] getExtendDataCell(Map<String, String> extendMap, Map<String, Cell> extendData){
+    	
+	    Cell[] cells = new Cell[extendMap.size()];
+	    String[] keySet = new String[extendMap.keySet().size()];
+	    extendMap.keySet().toArray(keySet); 
+	    for (int c = 0; c < extendMap.keySet().size(); c++) 
+	    {
+	    	cells[c] = extendData.get(keySet[c]);
+	    }
+		return cells;
+    }
+    
+    public  String[] getCellNames(int rowIndex) throws IOException {
+    	String[] testArray = null;
+        Row row = this.sheet.getRow(rowIndex);
+        testArray = new String[row.getPhysicalNumberOfCells()];
+        for(int column=0;column<row.getPhysicalNumberOfCells();column++){
+        	testArray[column] = row.getCell(column).getStringCellValue();
+        }
+        return testArray;
+    }
+    public  int  getSerialNumberColumnIndex() {
+		return serialNumberColumnIndex;
+    }
+    
+    public Position getInitPosition(){
+    	return new Position(this.initRowIndex, this.initColumnIndex);
+    }
+    
     /**
      * 创建新行，在使用时只要添加完一行，需要调用该方法创建
      */
