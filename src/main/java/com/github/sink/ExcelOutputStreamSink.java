@@ -5,6 +5,12 @@ import java.io.OutputStream;
 
 public class ExcelOutputStreamSink implements IExcelSink{
 	
+	@Override
+	public IExcelSink onCompleted() {
+		// TODO Auto-generated method stub
+		return IExcelSink.super.onCompleted();
+	}
+
 	private OutputStream outputStream;
 	
 	/**

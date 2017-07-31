@@ -7,6 +7,14 @@ import java.io.OutputStream;
 
 public class ExcelFileSink implements IExcelSink {
 	
+	@Override
+	public IExcelSink onCompleted() {
+		
+		System.out.println(outputStream);
+		
+		return IExcelSink.super.onCompleted();
+	}
+
 	private String path;
 	
 	private OutputStream outputStream;
@@ -27,6 +35,10 @@ public class ExcelFileSink implements IExcelSink {
 
 	@Override
 	public OutputStream getSink() {
+		if(outputStream != null){
+			return outputStream;
+		}
+		
 		try {
 			outputStream = new FileOutputStream(path);
 		} catch (FileNotFoundException e) {
