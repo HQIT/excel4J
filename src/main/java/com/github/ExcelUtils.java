@@ -963,7 +963,7 @@ public class ExcelUtils {
 			Row row = sheet.createRow(rowIndex);
 			if (object.getClass().isArray()) {
 				for (int j = 0; j < Array.getLength(object); j++) {
-					row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Array.get(object, j).toString());
+					row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(Array.get(object, j)));
 				}
 			} else if (object instanceof Collection) {
 				Collection<?> items = (Collection<?>) object;
@@ -1012,17 +1012,17 @@ public class ExcelUtils {
 				Row row = sheet.createRow(rowIndex);
 				if (object.getClass().isArray()) {
 					for (int j = 0; j < Array.getLength(object); j++) {
-						row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Array.get(object, j).toString());
+						row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(Array.get(object, j)));
 					}
 				} else if (object instanceof Collection) {
 					Collection<?> items = (Collection<?>) object;
 					int m = 0;
 					for (Object item : items) {
-						row.createCell(m, Cell.CELL_TYPE_STRING).setCellValue(item.toString());
+						row.createCell(m, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(item));
 						m++;
 					}
 				} else {
-					row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(object.toString());
+					row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(object));
 				}
 				rowIndex++;
 			}
