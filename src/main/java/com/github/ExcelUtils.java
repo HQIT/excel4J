@@ -969,11 +969,11 @@ public class ExcelUtils {
 				Collection<?> items = (Collection<?>) object;
 				int j = 0;
 				for (Object item : items) {
-					row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(item.toString());
+					row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(item));
 					j++;
 				}
 			} else {
-				row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(object.toString());
+				row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(object));
 			}
 			rowIndex++;
 		}

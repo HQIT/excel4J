@@ -20,6 +20,10 @@ import java.util.regex.Pattern;
  * date  : 2017/6/15  14:20</br>
  */
 public class Utils {
+	
+	static public String toString(Object object){
+		return object == null ? "" : object.toString();
+	}
 
     /**
      * <p>根据JAVA对象注解获取Excel表头信息</p></br>
