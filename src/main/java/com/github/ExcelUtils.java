@@ -23,6 +23,7 @@ import com.github.handler.ExcelHeader;
 import com.github.handler.ExcelTemplate;
 import com.github.sink.IExcelSink;
 import com.github.source.IExcelSource;
+import com.github.utils.IStringConverter;
 import com.github.utils.Utils;
 
 public class ExcelUtils {
@@ -52,21 +53,29 @@ public class ExcelUtils {
 	/* *) sheetIndex => Sheet索引(默认0) */
 
 	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int offsetLine, int limitLine,
-			int sheetIndex) throws Exception {
+			int sheetIndex, IStringConverter converter) throws Exception {
 		Workbook workbook = excelSource.getWorkBook();
-		return readExcel2ObjectsHandler(workbook, clazz, offsetLine, limitLine, sheetIndex);
+		return readExcel2ObjectsHandler(workbook, clazz, offsetLine, limitLine, sheetIndex, converter);
 	}
 
 	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int sheetIndex) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, sheetIndex);
+		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, sheetIndex, null);
 	}
 
 	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, 0);
+		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, 0, null);
+	}
+	
+	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int sheetIndex, IStringConverter converter) throws Exception {
+		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, sheetIndex, converter);
+	}
+
+	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, IStringConverter converter) throws Exception {
+		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, 0, converter);
 	}
 
 	private <T> List<T> readExcel2ObjectsHandler(Workbook workbook, Class<T> clazz, int offsetLine, int limitLine,
-			int sheetIndex) throws Exception {
+			int sheetIndex, IStringConverter converter) throws Exception {
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		Row row = sheet.getRow(offsetLine);
 		List<T> list = new ArrayList<>();
@@ -86,7 +95,13 @@ public class ExcelUtils {
 				String filed = header.getFiled();
 				Utils.fixCellType(cell, header.getFiledClazz());
 				String val = Utils.getCellValue(cell);
-				Object value = Utils.str2TargetClass(val, header.getFiledClazz());
+				Object value = new Object();
+				if (converter != null) {
+					value = converter.convert(filed, val) == null ? Utils.str2TargetClass(val, header.getFiledClazz()) : converter.convert(filed, val);
+				} else {
+					value = Utils.str2TargetClass(val, header.getFiledClazz());
+				}
+				
 				BeanUtils.copyProperty(obj, filed, value);
 			}
 			list.add(obj);
