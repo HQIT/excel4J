@@ -950,6 +950,13 @@ public class ExcelUtils {
 		}
 		excelSink.onCompleted().close();
 	}
+	
+	public void exportObjects2Excel(Map<String, Object> dataWithSheetName, List<String> header, boolean isXSSF, IExcelSink excelSink) throws Exception {
+
+		exportExcelNoModuleHandler(dataWithSheetName, header, isXSSF).write(excelSink.getSink());			
+		
+		excelSink.onCompleted().close();
+	}
 
 	private Workbook exportExcelNoModuleHandler(List<?> data, List<String> header, String sheetName, boolean isXSSF)
 			throws Exception {
@@ -1042,6 +1049,56 @@ public class ExcelUtils {
 				rowIndex++;
 			}
 		}
+		return workbook;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Workbook exportExcelNoModuleHandler(Map<String, Object> dataWithSheetName, List<String> headers, boolean isXSSF)
+			throws Exception {
+		Workbook workbook;
+		if (isXSSF) {
+			workbook = new XSSFWorkbook();
+		} else {
+			workbook = new HSSFWorkbook();
+		}
+		Sheet sheet;
+		for (Map.Entry<String, Object> data : dataWithSheetName.entrySet()) {
+			if (null != data.getKey() && !"".equals(data.getKey())) {
+				sheet = workbook.createSheet(data.getKey());
+			} else {
+				sheet = workbook.createSheet();
+			}
+			int rowIndex = 0;
+			if (null != headers && headers.size() > 0) {
+				// 写标题
+				Row row = sheet.createRow(rowIndex);
+				for (int i = 0; i < headers.size(); i++) {
+					row.createCell(i, Cell.CELL_TYPE_STRING).setCellValue(headers.get(i));
+				}
+				rowIndex++;
+			}
+			List<List<String>> datalist = new ArrayList<>();
+			datalist = (List<List<String>>) data.getValue();
+			for (Object object : datalist) {
+				Row row = sheet.createRow(rowIndex);
+				if (object.getClass().isArray()) {
+					for (int j = 0; j < Array.getLength(object); j++) {
+						row.createCell(j, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(Array.get(object, j)));
+					}
+				} else if (object instanceof Collection) {
+					Collection<?> items = (Collection<?>) object;
+					int m = 0;
+					for (Object item : items) {
+						row.createCell(m, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(item));
+						m++;
+					}
+				} else {
+					row.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(Utils.toString(object));
+				}
+				rowIndex++;
+			}
+		}
+		
 		return workbook;
 	}
 }
