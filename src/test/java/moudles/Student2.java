@@ -11,19 +11,19 @@ import java.util.Date;
  */
 public class Student2 {
 
-    @ExcelField(title = "学号", order = 1)
+    @ExcelField(title = "学号", order = 1, required = false)
     private Long id;
 
-    @ExcelField(title = "姓名", order = 2)
+    @ExcelField(title = "姓名", order = 2, required = false)
     private String name;
 
-    @ExcelField(title = "入学日期", order = 3)
+    @ExcelField(title = "入学日期", order = 3, required = false)
     private Date date;
 
-    @ExcelField(title = "班级", order = 4)
+    @ExcelField(title = "班级", order = 4, required = false)
     private Integer classes;
 
-    @ExcelField(title = "是否开除", order = 5)
+    @ExcelField(title = "是否开除", order = 5, required = false)
     private String expel;
 
     public Long getId() {

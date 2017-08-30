@@ -6,15 +6,15 @@ import com.github.annotation.ExcelField;
 public class Student1 {
 
     // 学号
-    @ExcelField(title = "学号", order = 1)
+    @ExcelField(title = "学号", order = 1, required = false)
     private String id;
 
     // 姓名
-    @ExcelField(title = "姓名", order = 2)
+    @ExcelField(title = "姓名", order = 2, required = false)
     private String name;
 
     // 班级
-    @ExcelField(title = "班级", order = 3)
+    @ExcelField(title = "班级", order = 3, required = false)
     private String classes;
 
     public String getId() {

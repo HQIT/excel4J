@@ -39,7 +39,7 @@ public class Utils {
             // 是否使用ExcelField注解
             if (field.isAnnotationPresent(ExcelField.class)) {
                 ExcelField er = field.getAnnotation(ExcelField.class);
-                headers.add(new ExcelHeader(er.title(), er.order(), field.getName(), field.getType()));
+                headers.add(new ExcelHeader(er.title(), er.order(), er.required(), field.getName(), field.getType()));
             }
         }
         Collections.sort(headers);
@@ -50,15 +50,26 @@ public class Utils {
     public Map<Integer, ExcelHeader> getHeaderMap(Row titleRow, Class<?> clz) {
         List<ExcelHeader> headers = getHeaderList(clz);
         Map<Integer, ExcelHeader> maps = new HashMap<>();
+        List<String> availableRequiredHeaders = new ArrayList<String>();
         for (Cell c : titleRow) {
             String title = c.getStringCellValue();
             for (ExcelHeader eh : headers) {
                 if (eh.getTitle().equals(title.trim())) {
                     maps.put(c.getColumnIndex(), eh);
+                    if (eh.isRequired()) {
+                    	availableRequiredHeaders.add(eh.getTitle());
+                    }
                     break;
                 }
             }
         }
+        
+        headers.forEach(header -> {
+        	if (header.isRequired() && availableRequiredHeaders.contains(header.getTitle())) {
+        		throw new RuntimeException("导入表格格式错误，必须包含：" + header.getTitle());
+        	}
+        });
+        
         return maps;
     }
 

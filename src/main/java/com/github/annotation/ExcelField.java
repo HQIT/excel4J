@@ -18,4 +18,9 @@ public @interface ExcelField {
      * 在excel的顺序
      */
     int order() default 9999;
+    
+    /**
+     * 该属性是否必须存在
+     */
+    boolean required();
 }

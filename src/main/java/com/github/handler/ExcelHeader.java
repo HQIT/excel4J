@@ -20,6 +20,10 @@ public class ExcelHeader implements Comparable<ExcelHeader> {
      * 属性类型
      */
     private Class<?> filedClazz;
+    /**
+     * 该标题是否必须存在
+     */
+    private boolean required = false;
 
     public String getTitle() {
         return title;
@@ -64,5 +68,22 @@ public class ExcelHeader implements Comparable<ExcelHeader> {
         this.filed = filed;
         this.filedClazz = filedClazz;
     }
+    
+    public ExcelHeader(String title, int order, boolean required, String filed, Class<?> filedClazz) {
+        super();
+        this.title = title;
+        this.order = order;
+        this.filed = filed;
+        this.filedClazz = filedClazz;
+        this.required = required;
+    }
+
+	public boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
 
 }
