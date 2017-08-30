@@ -65,7 +65,7 @@ public class Utils {
         }
         
         headers.forEach(header -> {
-        	if (header.isRequired() && availableRequiredHeaders.contains(header.getTitle())) {
+        	if (header.isRequired() && !availableRequiredHeaders.contains(header.getTitle())) {
         		throw new RuntimeException("导入表格格式错误，必须包含：" + header.getTitle());
         	}
         });
