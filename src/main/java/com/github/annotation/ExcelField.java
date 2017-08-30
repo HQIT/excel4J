@@ -22,5 +22,5 @@ public @interface ExcelField {
     /**
      * 该属性是否必须存在
      */
-    boolean required();
+    boolean required() default false;
 }
