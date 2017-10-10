@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -124,7 +125,8 @@ public class Utils {
                 o = String.valueOf(c.getCellFormula());
                 break;
             case Cell.CELL_TYPE_NUMERIC:
-                o = String.valueOf(c.getNumericCellValue());
+            	DecimalFormat df = new DecimalFormat("0");
+                o = String.valueOf(df.format(c.getNumericCellValue()));
                 break;
             case Cell.CELL_TYPE_STRING:
                 o = c.getStringCellValue();
