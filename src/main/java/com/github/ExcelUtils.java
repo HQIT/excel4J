@@ -86,6 +86,11 @@ public class ExcelUtils {
 				: sheet.getLastRowNum();
 		for (int i = offsetLine + 1; i <= maxLine; i++) {
 			row = sheet.getRow(i);
+			//跳过空行，根据第一列cell是否有数据来判断是不是空行不太准确，需要完善
+			if (row.getCell(0) == null || row.getCell(0).getCellType() == Cell.CELL_TYPE_BLANK) {
+				continue;
+			}
+			
 			T obj = clazz.newInstance();
 			for (Cell cell : row) {
 				int ci = cell.getColumnIndex();
