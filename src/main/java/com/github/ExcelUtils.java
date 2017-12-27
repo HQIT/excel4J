@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.github.data.Position;
@@ -158,9 +159,9 @@ public class ExcelUtils {
 		for (int i = offsetLine; i <= maxLine; i++) {
 			List<String> rows = new ArrayList<>();
 			Row row = sheet.getRow(i);
-			for (Cell cell : row) {
-				String val = Utils.getCellValue(cell);
-				rows.add(val);
+			for (int index = row.getFirstCellNum(); index < row.getLastCellNum(); index++){
+				Cell cell = row.getCell(index);
+				rows.add(cell == null ? "" : Utils.getCellValue(cell));
 			}
 			list.add(rows);
 		}
