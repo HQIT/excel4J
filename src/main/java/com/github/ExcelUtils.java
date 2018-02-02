@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.data.SheetInfo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -53,31 +54,31 @@ public class ExcelUtils {
 	/* *) limitLine => 最大读取行数(默认表尾) */
 	/* *) sheetIndex => Sheet索引(默认0) */
 
-	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int offsetLine, int limitLine,
-			int sheetIndex, IStringConverter converter) throws Exception {
+	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, SheetInfo sheetInfo, IStringConverter converter) throws Exception {
 		Workbook workbook = excelSource.getWorkBook();
-		return readExcel2ObjectsHandler(workbook, clazz, offsetLine, limitLine, sheetIndex, converter);
+		return readExcel2ObjectsHandler(workbook, clazz, sheetInfo, converter);
 	}
 
-	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int sheetIndex) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, sheetIndex, null);
+	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, SheetInfo sheetInfo) throws Exception {
+		return readExcel2Objects(excelSource, clazz, sheetInfo, null);
 	}
 
 	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, 0, null);
-	}
-	
-	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, int sheetIndex, IStringConverter converter) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, sheetIndex, converter);
+		return readExcel2Objects(excelSource, clazz, new SheetInfo(), null);
 	}
 
 	public <T> List<T> readExcel2Objects(IExcelSource excelSource, Class<T> clazz, IStringConverter converter) throws Exception {
-		return readExcel2Objects(excelSource, clazz, 0, Integer.MAX_VALUE, 0, converter);
+		return readExcel2Objects(excelSource, clazz, new SheetInfo(), converter);
 	}
 
-	private <T> List<T> readExcel2ObjectsHandler(Workbook workbook, Class<T> clazz, int offsetLine, int limitLine,
-			int sheetIndex, IStringConverter converter) throws Exception {
+	private <T> List<T> readExcel2ObjectsHandler(Workbook workbook, Class<T> clazz, SheetInfo sheetInfo, IStringConverter converter) throws Exception {
+		int sheetIndex = sheetInfo.getIndex();
+		int offsetLine = sheetInfo.getOffsetLine();
+		int limitLine = sheetInfo.getLimitLine();
+
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
+		sheetInfo.setName(sheet.getSheetName());
+		sheetInfo.setNumber(workbook.getNumberOfSheets());
 		Row row = sheet.getRow(offsetLine);
 		List<T> list = new ArrayList<>();
 		Map<Integer, ExcelHeader> maps = Utils.getHeaderMap(row, clazz);
