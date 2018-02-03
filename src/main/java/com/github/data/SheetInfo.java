@@ -8,10 +8,10 @@ public class SheetInfo {
         this.index = index;
     }
 
-    public SheetInfo(String name, int index, int number) {
-        this.name = name;
+    public SheetInfo(int offsetLine, int limitLine, int index){
+        this.offsetLine = offsetLine;
+        this.limitLine = limitLine;
         this.index = index;
-        this.number = number;
     }
 
     /**
