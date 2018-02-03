@@ -72,46 +72,50 @@ public class ExcelUtils {
 	}
 
 	private <T> List<T> readExcel2ObjectsHandler(Workbook workbook, Class<T> clazz, SheetInfo sheetInfo, IStringConverter converter) throws Exception {
-		int sheetIndex = sheetInfo.getIndex();
-		int offsetLine = sheetInfo.getOffsetLine();
-		int limitLine = sheetInfo.getLimitLine();
-
-		Sheet sheet = workbook.getSheetAt(sheetIndex);
-		sheetInfo.setName(sheet.getSheetName());
 		sheetInfo.setNumber(workbook.getNumberOfSheets());
-		Row row = sheet.getRow(offsetLine);
 		List<T> list = new ArrayList<>();
-		Map<Integer, ExcelHeader> maps = Utils.getHeaderMap(row, clazz);
-		if (maps == null || maps.size() <= 0)
-			throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");
-		int maxLine = sheet.getLastRowNum() > (offsetLine + limitLine) ? (offsetLine + limitLine)
-				: sheet.getLastRowNum();
-		for (int i = offsetLine + 1; i <= maxLine; i++) {
-			row = sheet.getRow(i);
-			//跳过空行，根据第一列cell是否有数据来判断是不是空行不太准确，需要完善
-			if (row.getCell(0) == null || row.getCell(0).getCellType() == Cell.CELL_TYPE_BLANK) {
-				continue;
-			}
-			
-			T obj = clazz.newInstance();
-			for (Cell cell : row) {
-				int ci = cell.getColumnIndex();
-				ExcelHeader header = maps.get(ci);
-				if (null == header)
+		for (int index = 0; index < sheetInfo.getNumber(); index++) {
+			sheetInfo.setIndex(index);
+			int sheetIndex = sheetInfo.getIndex();
+			int offsetLine = sheetInfo.getOffsetLine();
+			int limitLine = sheetInfo.getLimitLine();
+
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			sheetInfo.setName(sheet.getSheetName());
+			Row row = sheet.getRow(offsetLine);
+			Map<Integer, ExcelHeader> maps = Utils.getHeaderMap(row, clazz);
+			if (maps == null || maps.size() <= 0)
+				throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");
+
+			int maxLine = sheet.getLastRowNum() > (offsetLine + limitLine) ? (offsetLine + limitLine)
+					: sheet.getLastRowNum();
+			for (int i = offsetLine + 1; i <= maxLine; i++) {
+				row = sheet.getRow(i);
+				//跳过空行，根据第一列cell是否有数据来判断是不是空行不太准确，需要完善
+				if (row.getCell(0) == null || row.getCell(0).getCellType() == Cell.CELL_TYPE_BLANK) {
 					continue;
-				String filed = header.getFiled();
-				Utils.fixCellType(cell, header.getFiledClazz());
-				String val = Utils.getCellValue(cell);
-				Object value = new Object();
-				if (converter != null) {
-					value = converter.convert(filed, val) == null ? Utils.str2TargetClass(val, header.getFiledClazz()) : converter.convert(filed, val);
-				} else {
-					value = Utils.str2TargetClass(val, header.getFiledClazz());
 				}
-				
-				BeanUtils.copyProperty(obj, filed, value);
+
+				T obj = clazz.newInstance();
+				for (Cell cell : row) {
+					int ci = cell.getColumnIndex();
+					ExcelHeader header = maps.get(ci);
+					if (null == header)
+						continue;
+					String filed = header.getFiled();
+					Utils.fixCellType(cell, header.getFiledClazz());
+					String val = Utils.getCellValue(cell);
+					Object value = new Object();
+					if (converter != null) {
+						value = converter.convert(filed, val) == null ? Utils.str2TargetClass(val, header.getFiledClazz()) : converter.convert(filed, val);
+					} else {
+						value = Utils.str2TargetClass(val, header.getFiledClazz());
+					}
+
+					BeanUtils.copyProperty(obj, filed, value);
+				}
+				list.add(obj);
 			}
-			list.add(obj);
 		}
 		return list;
 	}
