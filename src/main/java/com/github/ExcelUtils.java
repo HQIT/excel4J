@@ -131,27 +131,23 @@ public class ExcelUtils {
 	/* *) limitLine => 最大读取行数(默认表尾) */
 	/* *) sheetIndex => Sheet索引(默认0) */
 
-	public List<List<String>> readExcel2List(IExcelSource excelSource, int offsetLine, int limitLine, int sheetIndex)
+	public List<List<String>> readExcel2List(IExcelSource excelSource, SheetInfo sheetInfo)
 			throws Exception {
 
 		Workbook workbook = excelSource.getWorkBook();
-		return readExcel2ObjectsHandler(workbook, offsetLine, limitLine, sheetIndex);
-	}
-
-	public List<List<String>> readExcel2List(IExcelSource excelSource, int offsetLine) throws Exception {
-
-		Workbook workbook = excelSource.getWorkBook();
-		return readExcel2ObjectsHandler(workbook, offsetLine, Integer.MAX_VALUE, 0);
+		return readExcel2ObjectsHandler(workbook, sheetInfo);
 	}
 
 	public List<List<String>> readExcel2List(IExcelSource excelSource) throws Exception {
 
 		Workbook workbook = excelSource.getWorkBook();
-		return readExcel2ObjectsHandler(workbook, 0, Integer.MAX_VALUE, 0);
+		return readExcel2ObjectsHandler(workbook, new SheetInfo());
 	}
 
-	private List<List<String>> readExcel2ObjectsHandler(Workbook workbook, int offsetLine, int limitLine,
-			int sheetIndex) throws Exception {
+	private List<List<String>> readExcel2ObjectsHandler(Workbook workbook, SheetInfo sheetInfo) throws Exception {
+		int sheetIndex = sheetInfo.getIndex();
+		int offsetLine = sheetInfo.getOffsetLine();
+		int limitLine = sheetInfo.getLimitLine();
 
 		List<List<String>> list = new ArrayList<>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
