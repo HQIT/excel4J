@@ -1100,8 +1100,36 @@ public class ExcelUtils {
 				}
 				rowIndex++;
 			}
+			/*单元格宽度自适应*/
+			int colSum = sheet.getRow(0).getPhysicalNumberOfCells();	//获取总列数
+			int rowSum = sheet.getLastRowNum();	//获取总行数
+			autoColumnWidth(sheet, colSum, rowSum);
 		}
-		
 		return workbook;
+	}
+
+	/**设置单元格宽度自适应（适用于每行数据格式相同的表）
+	 * @param sheet
+	 * @param colSum 总列数
+	 * @param rowSum 总行数
+	 */
+	public void autoColumnWidth(Sheet sheet, int colSum, int rowSum){
+		for (int i = 0; i < colSum; i++){
+			int maxWidth = 0;
+			int maxCount = 0;
+			for (int j = 0; j < rowSum; j++){
+				int colLength = sheet.getRow(j).getCell(i).getStringCellValue().length();
+				/*计算中文字符个数count*/
+				String regEx = "[\\u4e00-\\u9fa5]";
+				String str = sheet.getRow(j).getCell(i).getStringCellValue();
+				String term = str.replaceAll(regEx, "aa");
+				int count = term.length()-str.length();		//中文字符个数
+				if (maxWidth < colLength)
+					maxWidth = colLength;
+				if (maxCount < count)
+					maxCount = count;
+			}
+			sheet.setColumnWidth(i, (maxWidth + maxCount) * 256);
+		}
 	}
 }
