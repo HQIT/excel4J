@@ -29,7 +29,7 @@ public class SheetInfo {
      * Sheet的数量
      * 默认为: 1
      */
-    private int number;
+    private int number = 1;
 
     /**
      * 偏移行
