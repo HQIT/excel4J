@@ -79,6 +79,12 @@ public class ExcelUtils {
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		sheetInfo.setName(sheet.getSheetName());
 		sheetInfo.setNumber(workbook.getNumberOfSheets());
+
+		//如果是一个空表格则直接返回空的List
+		if (sheet.getLastRowNum() == 0 && sheet.getPhysicalNumberOfRows() == 0){
+			return new ArrayList<>();
+		}
+
 		Row row = sheet.getRow(offsetLine);
 		List<T> list = new ArrayList<>();
 		Map<Integer, ExcelHeader> maps = Utils.getHeaderMap(row, clazz);
