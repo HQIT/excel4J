@@ -1122,7 +1122,6 @@ public class ExcelUtils {
 	public void autoColumnWidth(Sheet sheet, int colSum, int rowSum){
 		for (int i = 0; i < colSum; i++){
 			int maxWidth = 0;
-			int maxCount = 0;
 			for (int j = 0; j < rowSum; j++){
 				int colLength = sheet.getRow(j).getCell(i).getStringCellValue().length();
 				/*计算中文字符个数count*/
@@ -1130,12 +1129,11 @@ public class ExcelUtils {
 				String str = sheet.getRow(j).getCell(i).getStringCellValue();
 				String term = str.replaceAll(regEx, "aa");
 				int count = term.length()-str.length();		//中文字符个数
+				colLength += count;
 				if (maxWidth < colLength)
 					maxWidth = colLength;
-				if (maxCount < count)
-					maxCount = count;
 			}
-			sheet.setColumnWidth(i, (maxWidth + maxCount) * 256);
+			sheet.setColumnWidth(i, maxWidth * 256);
 		}
 	}
 }
