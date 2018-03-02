@@ -1127,7 +1127,8 @@ public class ExcelUtils {
 				if (maxWidth < colLength)
 					maxWidth = colLength;
 			}
-			sheet.setColumnWidth(i, maxWidth * 256);
+			//maxWidth加上2，防止本列过于拥挤影响美观
+			sheet.setColumnWidth(i, (maxWidth + 2) * 256);
 		}
 	}
 }
