@@ -94,6 +94,7 @@ public class ExcelUtils {
 				: sheet.getLastRowNum();
 		for (int i = offsetLine + 1; i <= maxLine; i++) {
 			row = sheet.getRow(i);
+			if (row == null) break;
 			//跳过空行，根据第一列cell是否有数据来判断是不是空行不太准确，需要完善
 			if (row.getCell(0) == null || row.getCell(0).getCellType() == Cell.CELL_TYPE_BLANK) {
 				continue;
@@ -162,6 +163,8 @@ public class ExcelUtils {
 		for (int i = offsetLine; i <= maxLine; i++) {
 			List<String> rows = new ArrayList<>();
 			Row row = sheet.getRow(i);
+			if (row == null) break;
+
 			for (int index = row.getFirstCellNum(); index < row.getLastCellNum(); index++){
 				Cell cell = row.getCell(index);
 				rows.add(cell == null ? "" : Utils.getCellValue(cell));
